@@ -153,11 +153,11 @@ This project is open source and available under the MIT License.
 
 Please cite the following papers if you use this toolbox in your research:
 
-Chatterjee, S. (2021). A new coefficient of correlation. *Journal of the American Statistical Association*, 116(536), 2009-2022. https://doi.org/10.1080/01621459.2021.1932098
+Chatterjee, S. (2021). A new coefficient of correlation. *Journal of the American Statistical Association*, 116(536), 2009-2022. https://doi.org/10.1080/01621459.2020.1758115
 
-Seshadri, V., & Chatterjee, S. (2022). A simple bias reduction for Chatterjee's correlation. *Journal of Multivariate Analysis*, 189, 104880. https://doi.org/10.1016/j.jmva.2022.104880
+Dalitz, C., Arning, J., & Goebbels, S. (2024). A Simple Bias Reduction for Chatterjee’s Correlation. *Journal of Statistical Theory and Practice*, 18(4), Article 51. https://doi.org/10.1007/s42519-024-00399-y
 
-Zhu, X., & Li, J. (2024). On boosting the power of Chatterjee's rank correlation. *Journal of the American Statistical Association*, 119(545), 1-14. https://doi.org/10.1080/01621459.2023.2253692
+Lin, Z., & Han, F. (2023). On boosting the power of Chatterjee’s rank correlation. *Biometrika*, 110(2), 283–299. https://doi.org/10.1093/biomet/asac048
 
 ---
 
