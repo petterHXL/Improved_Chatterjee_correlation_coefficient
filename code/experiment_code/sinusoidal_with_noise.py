@@ -1,17 +1,44 @@
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-
-from ..toolbox.chatterjee_correlation import chatterjee_cc, normalized_chatterjee_cc, chatterjee_cc_mnn_with_ties
 import numpy as np
 import xicorpy as xicor
 import matplotlib.pyplot as plt
-from scipy.stats import pearsonr, spearmanr
+from scipy.stats import pearsonr, spearmanr, rankdata
+
+def get_ri_li(y_sorted):
+    n = len(y_sorted)
+    r = rankdata(y_sorted, method='average')
+    l = n - r + 1
+    return r, l
+
+def chatterjee_cc(x, y):
+    n = len(x)
+    if n <= 1:
+        return np.nan
+    
+    idx_x = np.argsort(x)
+    y_sorted = y[idx_x]
+    
+    r, l = get_ri_li(y_sorted)
+    
+    num = n * np.sum(np.abs(r[1:] - r[:-1]))
+    den = 2 * np.sum(l * (n - l))
+    if den == 0:
+        return np.nan
+    return 1 - num / den
+
+def normalized_chatterjee_cc(x, y):
+    raw_xi = chatterjee_cc(x, y)
+    max_possible = chatterjee_cc(y, y)
+    
+    if max_possible == 0:
+        return np.nan
+    
+    xi_prime = raw_xi / max_possible
+    return max(-1, xi_prime)
 
 # Sinusoidal relationship with noise
 x = np.linspace(-5, 5, 100)
-y_clean = np.sin(x)  # Sinusoidal function: y = sin(x)
-noise_level = 0.3  # Adjust this to control noise amount
+y_clean = np.sin(x)
+noise_level = 0.3
 y = y_clean + np.random.normal(0, noise_level, len(x))
 
 # Compute all correlations
@@ -22,8 +49,6 @@ else:
     xi = xi_result
 cc = chatterjee_cc(x, y)
 norm_cc = normalized_chatterjee_cc(x, y)
-M = int(np.sqrt(len(x)))
-ccc_mnn = chatterjee_cc_mnn_with_ties(x, y, M)
 
 pearson_corr, _ = pearsonr(x, y)
 spearman_corr, _ = spearmanr(x, y)
@@ -36,7 +61,6 @@ else:
 print(f"Xi correlation: {xi_scalar:.3f}")
 print(f"Chatterjee's CC: {cc:.3f}")
 print(f"Normalized Chatterjee's CC: {norm_cc:.3f}")
-print(f"M-NN Chatterjee's CC (M={M}): {ccc_mnn:.3f}")
 print(f"Pearson's CC: {pearson_corr:.3f}")
 print(f"Spearman's CC: {spearman_corr:.3f}")
 
@@ -45,8 +69,8 @@ plt.scatter(x, y, alpha=0.6, s=30, color='blue', label='Data points with noise')
 plt.plot(x, y_clean, 'r-', linewidth=2, label='y = sin(x) (clean)')
 plt.xlabel('X values')
 plt.ylabel('Y values')
-plt.title(f'Sinusoidal Relationship with Noise: y = sin(x) + N(0, {noise_level})\nXi: {xi_scalar:.3f}, Chatterjee\'s CC: {cc:.3f}, Normalized CC: {norm_cc:.3f}, M-NN CC: {ccc_mnn:.3f}\nPearson: {pearson_corr:.3f}, Spearman: {spearman_corr:.3f}')
+plt.title(f'Sinusoidal Relationship with Noise: y = sin(x) + N(0, {noise_level})\nXi: {xi_scalar:.3f}, Chatterjee\'s CC: {cc:.3f}, Normalized CC: {norm_cc:.3f}\nPearson: {pearson_corr:.3f}, Spearman: {spearman_corr:.3f}')
 plt.legend()
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
-plt.show() 
+plt.show()

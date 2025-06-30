@@ -1,8 +1,3 @@
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-
-from ..toolbox.chatterjee_correlation import chatterjee_cc, normalized_chatterjee_cc, chatterjee_cc_mnn_with_ties
 import numpy as np
 import xicorpy as xicor
 import matplotlib.pyplot as plt
@@ -52,34 +47,23 @@ def normalized_chatterjee_cc(x, y):
     xi_prime = raw_xi / max_possible
     return max(-1, min(1, xi_prime))  # ensure bounded within [-1, 1]
 
-def mixed_function(x):
+def piecewise_function(x):
     """
-    Create a mixed function:
-    - For x < 0: y = x²
-    - For 0 ≤ x < 2: y = sin(x)
-    - For x ≥ 2: y = 2x - 2 (linear continuation)
+    Create a monotonic function with upward jumps:
+    Start with y = x³, then add upward shifts at specific points
     """
-    y = np.zeros_like(x)
+    y = x**3  # Start with y = x³ (monotonic for all x)
     
-    # Negative part: quadratic
-    y[x < 0] = x[x < 0]**2
-    
-    # Positive part: sinusoidal for 0 ≤ x < 2
-    mask_sin = (x >= 0) & (x < 2)
-    y[mask_sin] = np.sin(x[mask_sin])
-    
-    # Linear continuation for x ≥ 2
-    mask_linear = x >= 2
-    y[mask_linear] = 2 * x[mask_linear] - 2
+    # Add upward jumps at specific points
+    y[x >= -2] += 50  # Jump up by 50 at x = -2
+    y[x >= 0] += 50   # Jump up by 50 at x = 0  
+    y[x >= 2] += 50   # Jump up by 50 at x = 2
     
     return y
 
-# Mixed relationship with noise
+# Piecewise relationship
 x = np.linspace(-5, 5, 100)
-y_clean = mixed_function(x)
-# Add noise to y
-noise_level = 0.5  # Adjust this to control noise amount
-y = y_clean + np.random.normal(0, noise_level, len(x))
+y = piecewise_function(x)
 
 # Compute all correlations
 xi_result = xicor.compute_xi_correlation(x, y, get_p_values=False)
@@ -108,16 +92,17 @@ print(f"Spearman's CC: {spearman_corr:.3f}")
 
 # Plot the data
 plt.figure(figsize=(12, 6))
-plt.scatter(x, y, alpha=0.6, s=30, color='blue', label='Data points with noise')
-plt.plot(x, y_clean, 'r-', linewidth=2, label='Mixed function (clean)')
+plt.scatter(x, y, alpha=0.6, s=30, color='blue', label='Data points')
+plt.plot(x, y, 'r-', linewidth=2, label='Piecewise function')
 
-# Add vertical lines to show the boundaries
+# Add vertical lines to show the piecewise boundaries
+plt.axvline(x=-2, color='green', linestyle='--', alpha=0.7, label='Boundary at x=-2')
 plt.axvline(x=0, color='green', linestyle='--', alpha=0.7, label='Boundary at x=0')
 plt.axvline(x=2, color='green', linestyle='--', alpha=0.7, label='Boundary at x=2')
 
 plt.xlabel('X values')
 plt.ylabel('Y values')
-plt.title(f'Mixed Function with Noise: x² (x<0), sin(x) (0≤x<2), 2x-2 (x≥2)\nXi: {xi_scalar:.3f}, Chatterjee\'s CC: {cc:.3f}, Normalized CC: {norm_cc:.3f}\nPearson: {pearson_corr:.3f}, Spearman: {spearman_corr:.3f}')
+plt.title(f'Piecewise Monotonic Function with Jumps\nXi: {xi_scalar:.3f}, Chatterjee\'s CC: {cc:.3f}, Normalized CC: {norm_cc:.3f}\nPearson: {pearson_corr:.3f}, Spearman: {spearman_corr:.3f}')
 plt.legend()
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
