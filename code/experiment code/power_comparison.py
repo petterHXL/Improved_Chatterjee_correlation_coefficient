@@ -9,10 +9,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Import our Chatterjee correlation implementation
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'toolbox'))
-from ..toolbox.chatterjee_correlation import chatterjee_cc
+from code.toolbox.chatterjee_correlation import chatterjee_cc
 
 def get_ri_li(y_sorted):
     """Helper function for Chatterjee's correlation"""
