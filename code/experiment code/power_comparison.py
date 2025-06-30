@@ -1,3 +1,8 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+from ..toolbox.chatterjee_correlation import chatterjee_cc
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -7,9 +12,6 @@ import pandas as pd
 from tqdm import tqdm
 import warnings
 warnings.filterwarnings('ignore')
-
-# Import our Chatterjee correlation implementation
-from code.toolbox.chatterjee_correlation import chatterjee_cc
 
 def get_ri_li(y_sorted):
     """Helper function for Chatterjee's correlation"""

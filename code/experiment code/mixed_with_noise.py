@@ -1,3 +1,8 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+from ..toolbox.chatterjee_correlation import chatterjee_cc, normalized_chatterjee_cc, chatterjee_cc_mnn_with_ties
 import numpy as np
 import xicorpy as xicor
 import matplotlib.pyplot as plt

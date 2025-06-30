@@ -1,8 +1,12 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+from ..toolbox.chatterjee_correlation import chatterjee_cc, normalized_chatterjee_cc, chatterjee_cc_mnn_with_ties
 import numpy as np
 import xicorpy as xicor
 import matplotlib.pyplot as plt
 from scipy.stats import pearsonr, spearmanr
-from Improved_Chatterjee_correlation_coefficient.code.toolbox.chatterjee_correlation import chatterjee_cc, normalized_chatterjee_cc, chatterjee_cc_mnn_with_ties
 
 # Linear relationship with noise
 x = np.linspace(-5, 5, 100)
