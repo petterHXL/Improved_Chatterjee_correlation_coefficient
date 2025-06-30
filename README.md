@@ -12,7 +12,7 @@ This project implements Chatterjee's correlation coefficient and conducts extens
 - **M-NN Extension**: Multiple nearest neighbors version for improved power
 - **Normalized CCC**: Normalized version with proper bounds
 - **Power Comparison Framework**: Comprehensive simulation framework
-- **Multiple Dependence Scenarios**: Linear, quadratic, sinusoidal, step functions, and heteroscedastic relationships
+- **Multiple Dependence Scenarios**: Linear, quadratic, sinusoidal, piecewise (step), mixed, and heteroscedastic relationships
 
 ### Toolbox Functions (in `code/toolbox/chatterjee_correlation.py`)
 - **chatterjee_cc(x, y):** Computes the original Chatterjee's correlation coefficient between two variables.
@@ -25,19 +25,20 @@ All functions require only `numpy` and `scipy` as dependencies.
 ## Project Structure
 
 ```
-Chatterjee's correlation coefficient project/
+Improved_Chatterjee_correlation_coefficient/
 ├── code/
 │   ├── experiment code/
-│   │   ├── linear_without_noise.py
 │   │   ├── linear_with_noise.py
-│   │   ├── quadratic_without_noise.py
+│   │   ├── linear_without_noise.py
 │   │   ├── quadratic_with_noise.py
-│   │   ├── sinusoidal_without_noise.py
+│   │   ├── quadratic_without_noise.py
 │   │   ├── sinusoidal_with_noise.py
-│   │   ├── piecewise_without_noise.py
+│   │   ├── sinusoidal_without_noise.py
 │   │   ├── piecewise_with_noise.py
-│   │   ├── mixed_without_noise.py
+│   │   ├── piecewise_without_noise.py
 │   │   ├── mixed_with_noise.py
+│   │   ├── mixed_without_noise.py
+│   │   ├── heteroscedastic.py
 │   │   └── power_comparison.py
 │   └── toolbox/
 │       └── chatterjee_correlation.py
@@ -50,7 +51,7 @@ Chatterjee's correlation coefficient project/
 1. Clone the repository:
 ```bash
 git clone https://github.com/petterHXL/Improved_Chatterjee_correlation_coefficient.git
-cd "Chatterjee's correlation coefficient project"
+cd Improved_Chatterjee_correlation_coefficient
 ```
 
 2. Install required dependencies:
@@ -81,8 +82,16 @@ print(f"Normalized CC: {norm_ccc:.3f}")
 ```bash
 cd "code/experiment code"
 python3 linear_without_noise.py
+python3 linear_with_noise.py
+python3 quadratic_without_noise.py
 python3 quadratic_with_noise.py
 python3 sinusoidal_without_noise.py
+python3 sinusoidal_with_noise.py
+python3 piecewise_without_noise.py
+python3 piecewise_with_noise.py
+python3 mixed_without_noise.py
+python3 mixed_with_noise.py
+python3 heteroscedastic.py
 ```
 
 #### Power Comparison Experiment
@@ -92,7 +101,7 @@ python3 power_comparison.py
 ```
 
 This will run a comprehensive power comparison across:
-- **Scenarios**: Linear, step, quadratic, sinusoidal, heteroscedastic
+- **Scenarios**: Linear, piecewise (step), quadratic, sinusoidal, heteroscedastic, mixed
 - **Sample sizes**: 20, 100, 500
 - **Noise levels**: 0.0, 0.2, 0.4, 0.6, 0.8, 1.0
 - **Methods**: Chatterjee's, Pearson's, Spearman's correlations
@@ -100,32 +109,42 @@ This will run a comprehensive power comparison across:
 ## Dependence Scenarios
 
 ### 1. Linear Relationship
-- **Formula**: `Y = 2X + 3λ·ε`
+- **Script**: `linear_without_noise.py`, `linear_with_noise.py`
+- **Formula**: `Y = 2X + 1 (+ noise)`
 - **Expected**: Pearson's and Spearman's should perform best
 
-### 2. Step Function
-- **Formula**: Piecewise constant with jumps
+### 2. Piecewise (Step Function) Relationship
+- **Script**: `piecewise_without_noise.py`, `piecewise_with_noise.py`
+- **Formula**: Piecewise monotonic function with jumps (see code for details)
 - **Expected**: Spearman's should perform best (monotonic)
 
 ### 3. Quadratic Relationship
+- **Script**: `quadratic_without_noise.py`, `quadratic_with_noise.py`
 - **Formula**: `Y = 3(X² - 0.5) + 2λ·ε`
 - **Expected**: Chatterjee's should perform best (non-monotonic)
 
 ### 4. Sinusoidal Relationship
+- **Script**: `sinusoidal_without_noise.py`, `sinusoidal_with_noise.py`
 - **Formula**: `Y = cos(6πX) + 3λ·ε`
 - **Expected**: Chatterjee's should perform best (oscillatory)
 
 ### 5. Heteroscedastic Relationship
-- **Formula**: Variance depends on X
+- **Script**: `heteroscedastic.py`
+- **Formula**: `Y = X * noise` (variance depends on X)
 - **Expected**: Chatterjee's should perform best (variance dependence)
+
+### 6. Mixed Relationship
+- **Script**: `mixed_without_noise.py`, `mixed_with_noise.py`
+- **Formula**: Combination of different functional forms (see code for details)
+- **Expected**: Chatterjee's is robust to complex dependencies
 
 ## Key Findings
 
 Based on the power comparison experiments:
 
-- **Chatterjee's CCC** performs best for non-monotonic relationships (quadratic, sinusoidal)
+- **Chatterjee's CCC** performs best for non-monotonic relationships (quadratic, sinusoidal, mixed, heteroscedastic)
 - **Pearson's PCC** performs best for linear relationships
-- **Spearman's SCC** performs best for monotonic relationships
+- **Spearman's SCC** performs best for monotonic relationships (piecewise)
 - Power decreases with increasing noise for all methods
 - Power increases with sample size for all methods
 
