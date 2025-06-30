@@ -106,47 +106,6 @@ This will run a comprehensive power comparison across:
 - **Noise levels**: 0.0, 0.2, 0.4, 0.6, 0.8, 1.0
 - **Methods**: Chatterjee's, Pearson's, Spearman's correlations
 
-## Dependence Scenarios
-
-### 1. Linear Relationship
-- **Script**: `linear_without_noise.py`, `linear_with_noise.py`
-- **Formula**: `Y = 2X + 1 (+ noise)`
-- **Expected**: Pearson's and Spearman's should perform best
-
-### 2. Piecewise (Step Function) Relationship
-- **Script**: `piecewise_without_noise.py`, `piecewise_with_noise.py`
-- **Formula**: Piecewise monotonic function with jumps (see code for details)
-- **Expected**: Spearman's should perform best (monotonic)
-
-### 3. Quadratic Relationship
-- **Script**: `quadratic_without_noise.py`, `quadratic_with_noise.py`
-- **Formula**: `Y = 3(X² - 0.5) + 2λ·ε`
-- **Expected**: Chatterjee's should perform best (non-monotonic)
-
-### 4. Sinusoidal Relationship
-- **Script**: `sinusoidal_without_noise.py`, `sinusoidal_with_noise.py`
-- **Formula**: `Y = cos(6πX) + 3λ·ε`
-- **Expected**: Chatterjee's should perform best (oscillatory)
-
-### 5. Heteroscedastic Relationship
-- **Script**: `heteroscedastic.py`
-- **Formula**: `Y = X * noise` (variance depends on X)
-- **Expected**: Chatterjee's should perform best (variance dependence)
-
-### 6. Mixed Relationship
-- **Script**: `mixed_without_noise.py`, `mixed_with_noise.py`
-- **Formula**: Combination of different functional forms (see code for details)
-- **Expected**: Chatterjee's is robust to complex dependencies
-
-## Key Findings
-
-Based on the power comparison experiments:
-
-- **Chatterjee's CCC** performs best for non-monotonic relationships (quadratic, sinusoidal, mixed, heteroscedastic)
-- **Pearson's PCC** performs best for linear relationships
-- **Spearman's SCC** performs best for monotonic relationships (piecewise)
-- Power decreases with increasing noise for all methods
-- Power increases with sample size for all methods
 
 ## M-NN Extension
 
