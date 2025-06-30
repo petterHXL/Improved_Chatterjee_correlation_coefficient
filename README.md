@@ -11,14 +11,15 @@ This project implements Chatterjee's correlation coefficient and conducts extens
 - **Original Chatterjee's Correlation**: Implementation of the standard CCC algorithm
 - **M-NN Extension**: Multiple nearest neighbors version for improved power
 - **Normalized CCC**: Normalized version with proper bounds
+- **Normalized M-NN CCC**: Normalized M-NN Chatterjee's correlation coefficient for comparability across datasets
 - **Power Comparison Framework**: Comprehensive simulation framework
 - **Multiple Dependence Scenarios**: Linear, quadratic, sinusoidal, piecewise (step), mixed, and heteroscedastic relationships
 
 ### Toolbox Functions (in `code/toolbox/chatterjee_correlation.py`)
 - **chatterjee_cc(x, y):** Computes the original Chatterjee's correlation coefficient between two variables.
 - **normalized_chatterjee_cc(x, y):** Computes a normalized version of CCC, scaling the coefficient for better interpretability.
-- **chatterjee_cc_mnn_with_ties(x, y, M):** Computes the M-NN extension of CCC, which uses multiple right nearest neighbors to improve statistical power and efficiency, with robust handling of ties.
-- **find_m_right_neighbors_robust(x, y, i, M):** Helper function for robust neighbor finding with tie-breaking.
+- **chatterjee_cc_mnn_with_ties(x, y, M):** Computes the M-NN extension of CCC, which uses multiple right nearest neighbors to improve statistical power and efficiency, with robust handling of ties. M is a user-chosen positive integer (e.g., 3, 5, 10, or sqrt(n)).
+- **normalized_chatterjee_cc_mnn(x, y, M):** Computes the normalized M-NN Chatterjee's correlation coefficient. Normalization is performed as xi'_M = max(-1, xi_M(x, y) / xi_M(y, y)), where xi_M(y, y) is the maximum possible value (perfect dependence). This ensures the normalized value is in [-1, 1] and comparable across datasets.
 
 All functions require only `numpy` and `scipy` as dependencies.
 
@@ -112,14 +113,22 @@ This will run a comprehensive power comparison across:
 The project also includes an implementation of the M-NN (Multiple Nearest Neighbors) extension of Chatterjee's correlation:
 
 ```python
-from code.toolbox.chatterjee_correlation import chatterjee_cc_mnn_with_ties
+from code.toolbox.chatterjee_correlation import chatterjee_cc_mnn_with_ties, normalized_chatterjee_cc_mnn
 
 # M-NN version with M = sqrt(n)
 M = int(np.sqrt(len(x)))
 ccc_mnn = chatterjee_cc_mnn_with_ties(x, y, M)
+norm_ccc_mnn = normalized_chatterjee_cc_mnn(x, y, M)
+print(f"M-NN Chatterjee's CC (M={M}): {ccc_mnn:.3f}")
+print(f"Normalized M-NN Chatterjee's CC (M={M}): {norm_ccc_mnn:.3f}")
 ```
 
-This extension provides improved power for detecting subtle dependencies.
+- **How to choose M:** M is a user-chosen positive integer. M=1 recovers the original CCC; larger M increases the locality considered. Typical values are 3, 5, 10, or sqrt(n).
+- **Normalization:** The normalized M-NN CCC divides the observed value by its maximum possible value (when x = y), ensuring comparability across datasets and settings:
+
+  xi'_M = max(-1, xi_M(x, y) / xi_M(y, y))
+
+This extension provides improved power for detecting subtle dependencies and a normalized version for fair comparison.
 
 ## Output
 
