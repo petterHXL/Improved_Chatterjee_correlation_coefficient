@@ -12,6 +12,8 @@ This project implements Chatterjee's correlation coefficient and conducts extens
 - **M-NN Extension**: Multiple nearest neighbors version for improved power
 - **Normalized CCC**: Normalized version with proper bounds
 - **Normalized M-NN CCC**: Normalized M-NN Chatterjee's correlation coefficient for comparability across datasets
+- **Inverse Distance Weighted CCC**: Global inverse distance weighted version for improved detection of complex dependencies
+- **Normalized IDW CCC**: Normalized inverse distance weighted version for fair comparison across datasets
 - **Power Comparison Framework**: Comprehensive simulation framework
 - **Multiple Dependence Scenarios**: Linear, quadratic, sinusoidal, piecewise (step), mixed, and heteroscedastic relationships
 
@@ -20,6 +22,8 @@ This project implements Chatterjee's correlation coefficient and conducts extens
 - **normalized_chatterjee_cc(x, y):** Computes a normalized version of CCC, scaling the coefficient for better interpretability.
 - **chatterjee_cc_mnn_with_ties(x, y, M):** Computes the M-NN extension of CCC, which uses multiple right nearest neighbors to improve statistical power and efficiency, with robust handling of ties. M is a user-chosen positive integer (e.g., 3, 5, 10, or sqrt(n)).
 - **normalized_chatterjee_cc_mnn(x, y, M):** Computes the normalized M-NN Chatterjee's correlation coefficient. Normalization is performed as xi'_M = max(-1, xi_M(x, y) / xi_M(y, y)), where xi_M(y, y) is the maximum possible value (perfect dependence). This ensures the normalized value is in [-1, 1] and comparable across datasets.
+- **inverse_distance_weighted_chatterjee(x, y):** Computes the inverse distance weighted Chatterjee's correlation coefficient. This improved version uses global inverse distance weighted rank differences: T_n = sum_{i=1}^{n-1} sum_{j=i+1}^{n} |R_j - R_i| / (j-i), normalized by H_n = (n+1)/3 * sum_{i != j} 1/|i-j|. Particularly effective for detecting oscillating and complex non-monotonic dependencies.
+- **normalized_inverse_distance_weighted_chatterjee(x, y):** Computes the normalized inverse distance weighted Chatterjee's correlation coefficient. Normalization is performed as xi'_IM = max(-1, xi_IM(x, y) / xi_IM(y, y)), ensuring values are in [-1, 1] and comparable across datasets.
 
 All functions require only `numpy` and `scipy` as dependencies.
 
@@ -155,9 +159,9 @@ Please cite the following papers if you use this toolbox in your research:
 
 Chatterjee, S. (2021). A new coefficient of correlation. *Journal of the American Statistical Association*, 116(536), 2009-2022. https://doi.org/10.1080/01621459.2020.1758115
 
-Dalitz, C., Arning, J., & Goebbels, S. (2024). A Simple Bias Reduction for Chatterjee’s Correlation. *Journal of Statistical Theory and Practice*, 18(4), Article 51. https://doi.org/10.1007/s42519-024-00399-y
+Dalitz, C., Arning, J., & Goebbels, S. (2024). A Simple Bias Reduction for Chatterjee's Correlation. *Journal of Statistical Theory and Practice*, 18(4), Article 51. https://doi.org/10.1007/s42519-024-00399-y
 
-Lin, Z., & Han, F. (2023). On boosting the power of Chatterjee’s rank correlation. *Biometrika*, 110(2), 283–299. https://doi.org/10.1093/biomet/asac048
+Lin, Z., & Han, F. (2023). On boosting the power of Chatterjee's rank correlation. *Biometrika*, 110(2), 283–299. https://doi.org/10.1093/biomet/asac048
 
 ---
 

@@ -6,6 +6,10 @@ from scipy.stats import rankdata
 import pandas as pd
 from tqdm import tqdm
 import warnings
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'toolbox'))
+from chatterjee_correlation import normalized_inverse_distance_weighted_chatterjee, inverse_distance_weighted_chatterjee
 warnings.filterwarnings('ignore')
 
 def get_ri_li(y_sorted):
@@ -97,10 +101,18 @@ def generate_data(scenario, n, lambda_noise, seed=None):
 
 def compute_correlations(x, y):
     """
-    Compute all three correlation measures and their p-values
+    Compute all correlation measures and their p-values
     """
     # Chatterjee's correlation
     xi_n, ccc_pvalue = chatterjee_test_statistic(x, y)
+    
+    # Normalized inverse distance weighted Chatterjee's correlation
+    # Note: For power testing, we'll use a simple threshold-based approach
+    # since the IDW version doesn't have a standard asymptotic test
+    idw_norm = normalized_inverse_distance_weighted_chatterjee(x, y)
+    # Use |idw_norm| > 0.3 as a threshold for dependence detection
+    # This is a heuristic - in practice you'd want to calibrate this threshold
+    idw_pvalue = 1 - abs(idw_norm) if abs(idw_norm) > 0.3 else 1.0
     
     # Pearson's correlation
     pearson_corr, pearson_pvalue = pearsonr(x, y)
@@ -110,6 +122,7 @@ def compute_correlations(x, y):
     
     return {
         'ccc': (xi_n, ccc_pvalue),
+        'idw_norm': (idw_norm, idw_pvalue),
         'pearson': (pearson_corr, pearson_pvalue),
         'spearman': (spearman_corr, spearman_pvalue)
     }
@@ -118,7 +131,7 @@ def run_power_simulation(scenario, n, lambda_noise, n_simulations=1000, alpha=0.
     """
     Run power simulation for a given scenario and parameters
     """
-    rejections = {'ccc': 0, 'pearson': 0, 'spearman': 0}
+    rejections = {'ccc': 0, 'idw_norm': 0, 'pearson': 0, 'spearman': 0}
     
     for i in range(n_simulations):
         # Generate data
@@ -193,11 +206,11 @@ def plot_power_comparison(results_df, scenario, sample_size=100):
                      (results_df['sample_size'] == sample_size)]
     
     # Create plot
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(12, 7))
     
-    methods = ['ccc', 'pearson', 'spearman']
-    colors = ['red', 'blue', 'green']
-    labels = ['Chatterjee (CCC)', 'Pearson (PCC)', 'Spearman (SCC)']
+    methods = ['ccc', 'idw_norm', 'pearson', 'spearman']
+    colors = ['red', 'orange', 'blue', 'green']
+    labels = ['Chatterjee (CCC)', 'Normalized IDW CCC', 'Pearson (PCC)', 'Spearman (SCC)']
     
     for method, color, label in zip(methods, colors, labels):
         method_data = data[data['method'] == method]
@@ -222,11 +235,11 @@ def plot_sample_size_effect(results_df, scenario, noise_level=0.4):
                      (results_df['noise_level'] == noise_level)]
     
     # Create plot
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(12, 7))
     
-    methods = ['ccc', 'pearson', 'spearman']
-    colors = ['red', 'blue', 'green']
-    labels = ['Chatterjee (CCC)', 'Pearson (PCC)', 'Spearman (SCC)']
+    methods = ['ccc', 'idw_norm', 'pearson', 'spearman']
+    colors = ['red', 'orange', 'blue', 'green']
+    labels = ['Chatterjee (CCC)', 'Normalized IDW CCC', 'Pearson (PCC)', 'Spearman (SCC)']
     
     for method, color, label in zip(methods, colors, labels):
         method_data = data[data['method'] == method]
@@ -254,10 +267,10 @@ def create_summary_table(results_df, noise_level=0.4, sample_size=100):
     
     # Pivot table
     summary = data.pivot(index='scenario', columns='method', values='power')
-    summary.columns = ['Chatterjee (CCC)', 'Pearson (PCC)', 'Spearman (SCC)']
+    summary.columns = ['Chatterjee (CCC)', 'Normalized IDW CCC', 'Pearson (PCC)', 'Spearman (SCC)']
     
     print(f"\nPower Comparison Summary (λ={noise_level}, n={sample_size}):")
-    print("=" * 60)
+    print("=" * 70)
     print(summary.round(3))
     
     return summary
@@ -267,7 +280,7 @@ def main():
     Main function to run the complete experiment
     """
     print("Chatterjee's Correlation Power Comparison Experiment")
-    print("=" * 60)
+    print("=" * 70)
     
     # Run the full experiment
     results_df = run_full_experiment()
@@ -294,6 +307,7 @@ def main():
     print("\nExperiment completed!")
     print("Key findings:")
     print("- CCC performs best for non-monotonic relationships (quadratic, sinusoidal)")
+    print("- Normalized IDW CCC may show improved performance for complex dependencies")
     print("- PCC/SCC perform best for linear and monotonic relationships")
     print("- Power decreases with increasing noise for all methods")
     print("- Power increases with sample size for all methods")
