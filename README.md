@@ -163,6 +163,8 @@ Dalitz, C., Arning, J., & Goebbels, S. (2024). A Simple Bias Reduction for Chatt
 
 Lin, Z., & Han, F. (2023). On boosting the power of Chatterjee's rank correlation. *Biometrika*, 110(2), 283–299. https://doi.org/10.1093/biomet/asac048
 
+Xia, L., Cao, R., Du, J., & Chen, X. (2025). The improved correlation coefficient of Chatterjee. *Journal of Nonparametric Statistics*, 37(2), 265–281. https://doi.org/10.1080/10485252.2024.2373242
+
 ---
 
 For questions or contributions, please open an issue or pull request on [GitHub](https://github.com/petterHXL/Improved_Chatterjee_correlation_coefficient).
